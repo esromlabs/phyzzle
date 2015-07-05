@@ -1,4 +1,5 @@
 from websocket_server import WebsocketServer
+from time import sleep
 
 # Called for every client connecting (after handshake)
 def new_client(client, server):
@@ -19,7 +20,17 @@ def message_received(client, server, message):
 		# echo start-streaming
 		server.send_message_to_all('{"msg": "Starting to stream"}')
 		# start the streaming
-		server.send_message_to_all('{"data": [30, 47, 41, 86, 13, 73, 89, 12]}')
+		server.streaming = True;
+		print 'start-streaming'
+		server.send_message_to_all('{"data": [20, 27, 11, 36, 13, 23, 19, 12]}')
+		server.send_message_to_all('{"data": [22, 17, 15, 26, 33, 13, 29, 17]}')
+
+	if message == 'stop-stream':
+		# echo stop-streaming
+		server.send_message_to_all('{"msg": "stop streaming"}')
+		# stop the streaming
+		server.streaming = False
+		print 'stop-streaming'
 
 	print("Client(%d) said: %s" % (client['id'], message))
 
@@ -29,4 +40,5 @@ server = WebsocketServer(PORT)
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)
+server.streaming = False
 server.run_forever()

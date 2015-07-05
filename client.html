@@ -10,7 +10,7 @@
 
       // Connect to Web Socket
       ws = new WebSocket("ws://localhost:9001/");
-
+      first_data = true;
       // Set event handlers.
       ws.onopen = function() {
         output("onopen");
@@ -27,11 +27,20 @@
             output("onmessage: " + msg_obj.msg);
         }
         if (msg_obj && msg_obj.data) {
-          d3.select("body").selectAll("p")
+          if (first_data) {
+            d3.select("body").selectAll("p")
             .data(msg_obj.data)
             .enter().append("p")
             .text(function(d) { return "I'm number " + d + "!"; })
             .style("font-size", function(d) { return d + "px"; });
+            first_data = false;
+          }
+          else {
+            d3.select("body").selectAll("p")
+            .data(msg_obj.data)
+            .text(function(d) { return "I'm number " + d + "!"; })
+            .style("font-size", function(d) { return d + "px"; });
+          }
         }
       };
 
